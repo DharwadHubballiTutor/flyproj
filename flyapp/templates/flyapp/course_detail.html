@@ -1,0 +1,73 @@
+<!-- filepath: c:/Users/Admin/bcaprojects/flyproj/flyapp/templates/flyapp/course_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+            <div class="card-body">
+                <h1 class="card-title">{{ course.title }}</h1>
+                <p class="card-text">{{ course.description }}</p>
+                <p class="card-text"><strong>Price:</strong> ${{ course.price }}</p>
+                <p class="card-text"><strong>Instructor:</strong> {{ course.instructor }}</p>
+                <p class="card-text"><small class="text-muted">Created on {{ course.created_at|date:"F j, Y" }}</small>
+                </p>
+                {% if user.is_superuser %}
+                <div class="mt-4">
+
+                    <a href="{% url 'lesson_create' course.pk %}" class="btn btn-primary">Add Lesson</a>
+
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h2>Lessons</h2>
+            <ul class="list-group">
+                {% for lesson in course.lessons.all %}
+                <li class="list-group-item">
+                   {% if user.is_authenticated %}
+                    <iframe src="{{ lesson.vedio_url }}" width="100%" height="400px"></iframe>
+                    {% else %}
+                    <p class="text-center">Please log in to view the lesson video.</p>
+                    {% endif %}
+                
+                    <h5>{{ lesson.title }}</h5>
+                    <p>{{ lesson.content }}</p>
+
+                </li>
+                {% empty %}
+                <li class="list-group-item">No lessons available for this course.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+         {% if user.is_superuser %}
+        <div class="mt-4">
+            <a href="{% url 'lesson_create' course.pk %}" class="btn btn-primary">Add Lesson</a>
+
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'course_list' %}" class="btn btn-secondary">Back to Courses</a>
+        </div>
+        {% else %}
+        <div class="mt-4">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
